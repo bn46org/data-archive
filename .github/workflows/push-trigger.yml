@@ -38,5 +38,19 @@ jobs:
       ACTOR_DOCKER_HUB: ${{ secrets.ACTOR_DOCKER_HUB }}
       RELEASE_DOCKER_HUB: ${{ secrets.RELEASE_DOCKER_HUB }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_DEVOPS }}
-      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_TOKEN }} # Optional if you want a different token for this repo
-      SLACK_MAPPING: ${{ secrets.SLACK_MAPPING }} 
+      # SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_TOKEN }} # Optional if you want a different token for this repo
+      # SLACK_MAPPING: ${{ secrets.SLACK_MAPPING }}
+  notify-slack:
+    needs: build-dockers  # Ensures this job runs after build-dockers
+    uses: bn46/kattu/.github/workflows/slack-notification.yml@develop # Call the reusable Slack Notification workflow
+    with:
+      pr_author: ${{ github.event.pull_request.user.login }}  # Use the PR author if available
+      repo: ${{ github.repository }}
+      commit: ${{ github.sha }}
+      message: ${{ github.event.head_commit.message }}  # or ${{ github.event.inputs.message }} for manual triggers
+      status: ${{ job.status }}
+      workflow: ${{ github.workflow }}
+      job_name: ${{ github.job }}
+    secrets:
+      slack_mapping: ${{ secrets.SLACK_MAPPING }}  # Centralized secret
+      slack_oauth_token: ${{ secrets.SLACK_OAUTH_TOKEN }}  # Centralized secret

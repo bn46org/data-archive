@@ -29,31 +29,14 @@ jobs:
             SERVICE_NAME: 'data-archive'
       fail-fast: false
     name: ${{ matrix.SERVICE_NAME }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      
-      - name: Build and push Docker images
-        uses: bn46/kattu/.github/workflows/docker-build.yml@develop
-        with:
-          SERVICE_LOCATION: ${{ matrix.SERVICE_LOCATION }}
-          SERVICE_NAME: ${{ matrix.SERVICE_NAME }}
-        env:
-          DEV_NAMESPACE_DOCKER_HUB: ${{ secrets.DEV_NAMESPACE_DOCKER_HUB }}
-          ACTOR_DOCKER_HUB: ${{ secrets.ACTOR_DOCKER_HUB }}
-          RELEASE_DOCKER_HUB: ${{ secrets.RELEASE_DOCKER_HUB }}
-
-      - name: Send Slack Notification
-        uses: ./.github/actions/slack-notification-action
-        with:
-          pr_author: ${{ github.actor }}  # Use the actor as PR author if it's triggered by a PR
-          repo: ${{ github.repository }}
-          commit: ${{ github.sha }}
-          message: ${{ github.event.head_commit.message }}
-          status: ${{ job.status }}
-          workflow: ${{ github.workflow }}
-          job_name: ${{ job.name }}
-        env:
-          SLACK_MAPPING: ${{ secrets.SLACK_MAPPING }}
-          SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_OAUTH_TOKEN }}
+    uses: mosip/kattu/.github/workflows/docker-build.yml@master
+    with:
+      SERVICE_LOCATION: ${{ matrix.SERVICE_LOCATION }}
+      SERVICE_NAME: ${{ matrix.SERVICE_NAME }}
+    secrets:
+      DEV_NAMESPACE_DOCKER_HUB: ${{ secrets.DEV_NAMESPACE_DOCKER_HUB }}
+      ACTOR_DOCKER_HUB: ${{ secrets.ACTOR_DOCKER_HUB }}
+      RELEASE_DOCKER_HUB: ${{ secrets.RELEASE_DOCKER_HUB }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_DEVOPS }}
+      SLACK_USER_MAPPING: ${{ secrets.SLACK_USER_MAPPING }}
+      SLACK_OAUTH_TOKEN: ${{ secrets.SLACK_USER_MAPPING }}

@@ -3,7 +3,13 @@ name: Slack Notification on Pull Request
 on:
   pull_request:
     types: [opened, synchronize]
-
+  push:
+    branches:
+      - master
+      - 1.*
+      - develop
+      - release*
+      - MOSIP*
 jobs:
   notify:
     runs-on: ubuntu-latest

@@ -1,31 +1,22 @@
-name: Notify PR Failure
+name: Slack Notification on Pull Request
 
 on:
   pull_request:
     types: [opened, synchronize]
 
 jobs:
-  notify-failure:
+  notify:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Get PR author
-        id: pr_author
-        run: echo "author=${{ github.event.pull_request.user.login }}" >> $GITHUB_OUTPUT
-
-      - name: Get Slack username from Secret Mapping
-        id: slack_mapping
-        run: |
-          github_username="${{ steps.pr_author.outputs.author }}"
-          slack_username=$(echo '${{ secrets.SLACK_MAP }}' | jq -r --arg ghuser "$github_username" '.[$ghuser]')
-          echo "slack_user=${slack_username}" >> $GITHUB_OUTPUT
-
-      - name: Notify via Slack
-        if: steps.slack_mapping.outputs.slack_user != ''
-        uses: slackapi/slack-github-action@v1.15.0
+      - name: Post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.27.0
         with:
-          slack-bot-token: ${{ secrets.SLACK_BOT_TOKEN }}
-          channel-id: ${{ steps.slack_mapping.outputs.slack_user }} # Ensure this is correct
-          text: "Your PR #${{ github.event.pull_request.number }} has failed."
+          channel-id: 'U07QEJS9LM9' # Replace with your actual channel IDs
+          slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

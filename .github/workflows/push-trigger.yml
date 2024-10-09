@@ -10,6 +10,7 @@ on:
       - develop
       - release*
       - MOSIP*
+
 jobs:
   notify:
     runs-on: ubuntu-latest
@@ -30,11 +31,17 @@ jobs:
         id: slack
         uses: slackapi/slack-github-action@v1.27.0
         with:
-          # Slack channel id, channel name, or user id to post message.
-          # See also: https://api.slack.com/methods/chat.postMessage#channels
-          # You can pass in multiple channels to post to by providing a comma-delimited list of channel IDs.
           channel-id: 'U07QEJS9LM9'
-          # For posting a simple plain text message
-          slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+          slack-message: |
+            *GitHub Action Notification* :rocket:
+            *Repository*: ${{ github.repository }}
+            *Message*: ${{ github.event.head_commit.message || github.event.pull_request.title }}
+            *Commit*: ${{ github.sha }}
+            *Author*: ${{ github.event.head_commit.author.name || github.event.pull_request.user.login }}
+            *Action*: ${{ github.event.action }}
+            *Event Name*: ${{ github.event_name }}
+            *Branch (ref)*: ${{ github.ref }}
+            *Workflow*: ${{ github.workflow }}
+            *PR/Commit URL*: ${{ github.event.pull_request.html_url || github.event.head_commit.url }}
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}        
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

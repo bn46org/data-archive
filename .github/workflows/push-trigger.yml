@@ -29,6 +29,9 @@ jobs:
           # Access the JSON string from the secret
           SLACK_USERS_MAP="${{ secrets.SLACK_USERS_MAP }}"
 
+          # Debug: Print the JSON to ensure it's properly formatted
+          echo "SLACK_USERS_MAP: $SLACK_USERS_MAP"
+
           # Extract GitHub username of the PR author
           GITHUB_USER="${{ github.event.pull_request.user.login }}"
 

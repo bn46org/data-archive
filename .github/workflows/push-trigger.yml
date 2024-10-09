@@ -26,15 +26,25 @@ jobs:
       - name: Decode Slack Users Secret
         id: slack_id
         run: |
-          # Decode the JSON string from the secret
+          # Access the JSON string from the secret
           SLACK_USERS_MAP="${{ secrets.SLACK_USERS_MAP }}"
+
+          # Extract GitHub username of the PR author
+          GITHUB_USER="${{ github.event.pull_request.user.login }}"
+
           # Use jq to extract the Slack ID corresponding to the GitHub username
-          SLACK_USER_ID=$(echo "$SLACK_USERS_MAP" | jq -r --arg github_user "${{ env.author }}" '.[$github_user]')
+          SLACK_USER_ID=$(echo "$SLACK_USERS_MAP" | jq -r --arg github_user "$GITHUB_USER" '.[$github_user]')
+
+          # Check if the Slack user ID was found
           if [ -z "$SLACK_USER_ID" ] || [ "$SLACK_USER_ID" == "null" ]; then
-            echo "Slack user ID not found for GitHub user: ${{ env.author }}"
+            echo "Slack user ID not found for GitHub user: $GITHUB_USER"
             exit 1
           fi
+
+          # Export the Slack user ID to the GitHub environment
           echo "SLACK_USER_ID=$SLACK_USER_ID" >> $GITHUB_ENV
+
+        shell: bash
 
       - name: Post to a Slack channel
         id: slack

@@ -1,8 +1,17 @@
-name: Slack Notification on Pull Request
+name: Build data-archive
 
 on:
+  release:
+    types: [published]
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Message for manually triggering'
+        required: false
+        default: 'Triggered for Updates'
+        type: string
   push:
     branches:
       - master
@@ -12,60 +21,26 @@ on:
       - MOSIP*
 
 jobs:
-  notify:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Get PR author
-        id: author
-        run: echo "author=${{ github.event.pull_request.user.login }}" >> $GITHUB_ENV
-
-      - name: Decode Slack Users Secret
-        id: slack_id
-        run: |
-          # Access the JSON string from the secret
-          SLACK_USERS_MAP="${{ secrets.SLACK_USERS_MAP }}"
-
-          # Debug: Print the JSON to ensure it's properly formatted
-          echo "SLACK_USERS_MAP: $SLACK_USERS_MAP"
-
-          # Extract GitHub username of the PR author
-          GITHUB_USER="${{ github.event.pull_request.user.login }}"
-
-          # Use jq to extract the Slack ID corresponding to the GitHub username
-          #SLACK_USER_ID=$(echo "$SLACK_USERS_MAP" | jq -r --arg github_user "$GITHUB_USER" '.[$github_user]')
-          SLACK_USER_ID=$(echo "$SLACK_USERS_MAP" | grep -oP "$GITHUB_USER:\K[^,]+")
-          echo $SLACK_USER_ID
-
-          # Check if the Slack user ID was found
-          if [ -z "$SLACK_USER_ID" ] || [ "$SLACK_USER_ID" == "null" ]; then
-            echo "Slack user ID not found for GitHub user: $GITHUB_USER"
-            exit 1
-          fi
-
-          # Export the Slack user ID to the GitHub environment
-          echo "SLACK_USER_ID=$SLACK_USER_ID" >> $GITHUB_ENV
-
-        shell: bash
-
-      - name: Post to a Slack channel
-        id: slack
-        uses: slackapi/slack-github-action@v1.27.0
-        with:
-          channel-id: ${{ env.SLACK_USER_ID }}
-          slack-message: |
-            *GitHub Action Notification* :rocket:
-            *Repository*: ${{ github.repository }}
-            *Message*: ${{ github.event.head_commit.message || github.event.pull_request.title }}
-            *Commit*: ${{ github.sha }}
-            *Author*: ${{ github.event.pull_request.user.login }}
-            *Action*: ${{ github.event.action }}
-            *Event Name*: ${{ github.event_name }}
-            *Branch (ref)*: ${{ github.ref }}
-            *Workflow*: ${{ github.workflow }}
-            *PR/Commit URL*: ${{ github.event.pull_request.html_url || github.event.head_commit.url }}
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  build-dockers:
+    strategy:
+      matrix:
+        include:
+          - SERVICE_LOCATION: 'data-archive'
+            SERVICE_NAME: 'data-archive'
+      fail-fast: false
+    name: ${{ matrix.SERVICE_NAME }}
+    uses: bn46/kattu/.github/workflows/docker-build.yml@develop
+    with:
+      SERVICE_LOCATION: ${{ matrix.SERVICE_LOCATION }}
+      SERVICE_NAME: ${{ matrix.SERVICE_NAME }}
+      GITHUB_USER: ${{ github.event.pull_request.user.login }}
+      PR_URL: ${{ github.event.pull_request.html_url }}
+      PR_TITLE: ${{ github.event.pull_request.title }}
+      REPOSITORY: ${{ github.repository }}
+      ACTION: ${{ github.event.action }}
+    secrets:
+      DEV_NAMESPACE_DOCKER_HUB: ${{ secrets.DEV_NAMESPACE_DOCKER_HUB }}
+      ACTOR_DOCKER_HUB: ${{ secrets.ACTOR_DOCKER_HUB }}
+      RELEASE_DOCKER_HUB: ${{ secrets.RELEASE_DOCKER_HUB }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}  # Passed from calling workflow
+      GENERAL_CHANNEL_ID: ${{ secrets.GENERAL_CHANNEL_ID }}  # Passed from calling workflow

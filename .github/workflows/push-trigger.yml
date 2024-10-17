@@ -38,11 +38,11 @@ jobs:
       PR_TITLE: ${{ github.event.pull_request.title }}
       REPOSITORY: ${{ github.repository }}
       ACTION: ${{ github.event.action }}
-    secrets: inherit
-      # DEV_NAMESPACE_DOCKER_HUB: ${{ secrets.DEV_NAMESPACE_DOCKER_HUB }}
-      # ACTOR_DOCKER_HUB: ${{ secrets.ACTOR_DOCKER_HUB }}
-      # RELEASE_DOCKER_HUB: ${{ secrets.RELEASE_DOCKER_HUB }}
-      # SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}  # Passed from calling workflow
-      # GENERAL_CHANNEL_ID: ${{ secrets.GENERAL_CHANNEL_ID }}  # Passed from calling workflow
-      # SLACK_USERS_MAP: ${{ secrets.SLACK_USERS_MAP }}
-      # GPG_USER_MAP_PASSPHRASE: ${{ secrets.GPG_USER_MAP_PASSPHRASE }}
+    secrets:
+      DEV_NAMESPACE_DOCKER_HUB: ${{ secrets.DEV_NAMESPACE_DOCKER_HUB }}
+      ACTOR_DOCKER_HUB: ${{ secrets.ACTOR_DOCKER_HUB }}
+      RELEASE_DOCKER_HUB: ${{ secrets.RELEASE_DOCKER_HUB }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}  # Passed from calling workflow
+      GENERAL_CHANNEL_ID: ${{ secrets.GENERAL_CHANNEL_ID }}  # Passed from calling workflow
+      SLACK_USERS_MAP: ${{ secrets.SLACK_USERS_MAP }}
+      GPG_USER_MAP_PASSPHRASE: ${{ secrets.GPG_USER_MAP_PASSPHRASE }}

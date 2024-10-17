@@ -29,20 +29,27 @@ jobs:
             SERVICE_NAME: 'data-archive'
       fail-fast: false
     name: ${{ matrix.SERVICE_NAME }}
-    uses: bn46org/kattu/.github/workflows/docker-build.yml@develop
+    uses: bn46/kattu/.github/workflows/docker-build.yml@develop
     with:
       SERVICE_LOCATION: ${{ matrix.SERVICE_LOCATION }}
       SERVICE_NAME: ${{ matrix.SERVICE_NAME }}
-      GITHUB_USER: ${{ github.event.pull_request.user.login }}
-      PR_URL: ${{ github.event.pull_request.html_url }}
-      PR_TITLE: ${{ github.event.pull_request.title }}
-      REPOSITORY: ${{ github.repository }}
-      ACTION: ${{ github.event.action }}
     secrets:
       DEV_NAMESPACE_DOCKER_HUB: ${{ secrets.DEV_NAMESPACE_DOCKER_HUB }}
       ACTOR_DOCKER_HUB: ${{ secrets.ACTOR_DOCKER_HUB }}
       RELEASE_DOCKER_HUB: ${{ secrets.RELEASE_DOCKER_HUB }}
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}  # Passed from calling workflow
-      GENERAL_CHANNEL_ID: ${{ secrets.GENERAL_CHANNEL_ID }}  # Passed from calling workflow
-      SLACK_USERS_MAP: ${{ secrets.SLACK_USERS_MAP }}
+
+  notify-slack-on-failure:
+    # This job depends on the outcome of the build job.
+    if: failure()  # Only run when the build-dockers job fails
+    needs: build-dockers
+    uses: bn46/kattu/.github/workflows/slack-notification.yml@develop
+    with:
+      GITHUB_USER: ${{ github.actor }}
+      REPOSITORY: ${{ github.repository }}
+      PR_TITLE: ${{ github.event.pull_request.title || 'N/A' }}
+      ACTION: ${{ github.event.action }}
+      PR_URL: ${{ github.event.pull_request.html_url || github.event.release.html_url || 'N/A' }}
+    secrets:
       GPG_USER_MAP_PASSPHRASE: ${{ secrets.GPG_USER_MAP_PASSPHRASE }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      GENERAL_CHANNEL_ID: ${{ secrets.GENERAL_CHANNEL_ID }}

@@ -39,15 +39,14 @@ jobs:
       RELEASE_DOCKER_HUB: ${{ secrets.RELEASE_DOCKER_HUB }}
 
   notify-slack-on-failure:
-    # This job depends on the outcome of the build job.
-    if: failure()  # Only run when the build-dockers job fails
+    if: failure()
     needs: build-dockers
     uses: bn46org/kattu/.github/workflows/slack-notification.yml@develop
     with:
       GITHUB_USER: ${{ github.actor }}
       REPOSITORY: ${{ github.repository }}
       PR_TITLE: ${{ github.event.pull_request.title || 'N/A' }}
-      ACTION: ${{ github.event.action }}
+      ACTION: ${{ github.event.action || 'N/A' }}
       PR_URL: ${{ github.event.pull_request.html_url || github.event.release.html_url || 'N/A' }}
     secrets:
       GPG_USER_MAP_PASSPHRASE: ${{ secrets.GPG_USER_MAP_PASSPHRASE }}

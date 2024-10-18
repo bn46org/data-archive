@@ -51,4 +51,4 @@ jobs:
     secrets:
       GPG_USER_MAP_PASSPHRASE: ${{ secrets.GPG_USER_MAP_PASSPHRASE }}
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      GENERAL_CHANNEL_ID: ${{ secrets.GENERAL_CHANNEL_ID }}
+      SLACK_CHANNEL_ID: ${{ secrets.GENERAL_CHANNEL_ID }}

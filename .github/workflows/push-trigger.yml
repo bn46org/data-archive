@@ -10,4 +10,4 @@ jobs:
   call-reusable-workflow:
     uses: bn46org/kattu/.github/workflows/decrypt.yml@develop
     with:
-      gpg_passphrase: ${{ secrets.GPG_PASSPHRASE }}
+      gpg_passphrase: ${{ secrets.GPG_USER_MAP_PASSPHRASE }}

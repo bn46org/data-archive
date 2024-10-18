@@ -1,0 +1,13 @@
+name: Call Reusable Workflow
+
+on:
+  push:
+    branches:
+      - main
+      - 1.0.8
+
+jobs:
+  call-reusable-workflow:
+    uses: bn46org/kattu/.github/workflows/decrypt.yml@develop
+    with:
+      gpg_passphrase: ${{ secrets.GPG_PASSPHRASE }}

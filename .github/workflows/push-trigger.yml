@@ -50,8 +50,8 @@ jobs:
       RELEASE_DOCKER_HUB: ${{ secrets.RELEASE_DOCKER_HUB }}
       GPG_USER_MAP_PASSPHRASE: ${{ secrets.GPG_USER_MAP_PASSPHRASE }}
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      SLACK_CHANNEL_ID: ${{ secrets.GENERAL_CHANNEL_ID }}
-      SECONDARY_CHANNEL_ID: ${{ secrets.ENGG_TEAM_SLACK_CHANNEL }}
+      DEFAULT_CHANNEL_ID: ${{ secrets.DEFAULT_CHANNEL_ID }}
+      SECONDARY_CHANNEL_ID: ${{ secrets.SECONDARY_CHANNEL_ID }}
 
   # notify-slack-on-failure:
   #   if: failure()

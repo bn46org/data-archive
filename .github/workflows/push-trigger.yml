@@ -29,29 +29,29 @@ jobs:
             SERVICE_NAME: 'data-archive'
       fail-fast: false
     name: ${{ matrix.SERVICE_NAME }}
-    uses: bn46org/kattu/.github/workflows/docker-build.yml@develop
+    uses: bn46org/kattu/.github/workflows/docker-build.yml@master-java21
     with:
       SERVICE_LOCATION: ${{ matrix.SERVICE_LOCATION }}
       SERVICE_NAME: ${{ matrix.SERVICE_NAME }}
-      GITHUB_USER: ${{ github.actor }}
-      WORKFLOW: ${{ github.workflow }}
-      #PR_TITLE: ${{ github.event.pull_request.title || 'N/A' }}
-      ACTION: ${{ github.event.action || 'N/A' }}
-      PR_URL: "https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
-      COMMIT: "https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
-      REPO: ${{ github.repository }}
-      JOB_URL: "https://github/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+      # GITHUB_USER: ${{ github.actor }}
+      # WORKFLOW: ${{ github.workflow }}
+      # #PR_TITLE: ${{ github.event.pull_request.title || 'N/A' }}
+      # ACTION: ${{ github.event.action || 'N/A' }}
+      # PR_URL: "https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}"
+      # COMMIT: "https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+      # REPO: ${{ github.repository }}
+      # JOB_URL: "https://github/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
       #JOB_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-      MESSAGE: ${{ github.event.head_commit.message || github.event.pull_request.title }}
+      # MESSAGE: ${{ github.event.head_commit.message || github.event.pull_request.title }}
     secrets:
       DEV_NAMESPACE_DOCKER_HUB: ${{ secrets.DEV_NAMESPACE_DOCKER_HUB }}
       ACTOR_DOCKER_HUB: ${{ secrets.ACTOR_DOCKER_HUB }}
       RELEASE_DOCKER_HUB: ${{ secrets.RELEASE_DOCKER_HUB }}
-      GPG_USER_MAP_PASSPHRASE: ${{ secrets.GPG_USER_MAP_PASSPHRASE }}
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      DEFAULT_CHANNEL_ID: ${{ secrets.DEFAULT_CHANNEL_ID }}
-      SECONDARY_CHANNEL_ID: ${{ secrets.SECONDARY_CHANNEL_ID }}
+      # GPG_USER_MAP_PASSPHRASE: ${{ secrets.GPG_USER_MAP_PASSPHRASE }}
+      # SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      # DEFAULT_CHANNEL_ID: ${{ secrets.DEFAULT_CHANNEL_ID }}
+      # SECONDARY_CHANNEL_ID: ${{ secrets.SECONDARY_CHANNEL_ID }}
 
   # notify-slack-on-failure:
   #   if: failure()

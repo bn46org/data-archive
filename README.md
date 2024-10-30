@@ -5,7 +5,7 @@ This repository contains components that can be customized by a country. For exa
 
 ---
 ### About MOSIP
-To know about MOSIP check out our [Platform Documentation](https://github.com/mosip/mosip-docs/wiki
+To know about MOSIP check out our [Platform Documentation](https://github.com/mosip/mosip-docs/wik
 
 ### Contribute
 You can contribute to MOSIP! 
